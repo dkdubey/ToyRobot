@@ -1,7 +1,7 @@
 package com.app.toy.robot;
 
-import com.app.toy.robot.common.Command;
-import com.app.toy.robot.common.Direction;
+import com.app.toy.robot.common.CommandEnum;
+import com.app.toy.robot.common.DirectionEnum;
 import com.app.toy.robot.exception.InvalidCommandException;
 import com.app.toy.robot.exception.InvalidDirectionException;
 import com.app.toy.robot.exception.InvalidPositionException;
@@ -12,7 +12,7 @@ public class ToyRobotImpl implements ToyRobot{
     private int posX = 0;
     private int posY = 0;
     private Table table;
-    private Direction direction;
+    private DirectionEnum directionEnum;
 
 
     ToyRobotImpl(Table table) {
@@ -27,9 +27,9 @@ public class ToyRobotImpl implements ToyRobot{
             commandStr = commandStr.substring(0, commandStr.indexOf(COMMAND_SAPARATOR));
         }
 
-        Command command;
+        CommandEnum command;
         try {
-            command = Command.valueOf(commandStr.toUpperCase());
+            command = CommandEnum.valueOf(commandStr.toUpperCase());
         }catch (Exception ex){
             throw new InvalidCommandException(String.format("Ignored: Invalid Command [%1$s]", commandStr));
         }
@@ -42,16 +42,16 @@ public class ToyRobotImpl implements ToyRobot{
 
                 int receivedPosX;
                 int receivedPosY;
-                Direction receivedDirection;
+                DirectionEnum receivedDirectionEnum;
                 try {
                     receivedPosX = Integer.parseInt(paramArray[0].trim());
                     receivedPosY = Integer.parseInt(paramArray[1].trim());
-                    receivedDirection = Direction.valueOf(paramArray[2].trim().toUpperCase());
+                    receivedDirectionEnum = DirectionEnum.valueOf(paramArray[2].trim().toUpperCase());
                 }catch (Exception ex){
                     throw new InvalidCommandException(String.format("Command Ignored: Invalid parameter values [%1$s]."
                             + "\n Try 'PLACE X,Y,FACING' where X and Y are a valid numbers(int) and FACING is valid direction (EAST,WEST,NORTH,SOUTH)", paramString));
                 }
-                this.place(receivedPosX, receivedPosY, receivedDirection);
+                this.place(receivedPosX, receivedPosY, receivedDirectionEnum);
                 break;
             case MOVE:
                 this.move();
@@ -69,9 +69,9 @@ public class ToyRobotImpl implements ToyRobot{
 
     }
 
-    void place(int posX, int posY, Direction direction) throws InvalidDirectionException, InvalidPositionException{
+    void place(int posX, int posY, DirectionEnum directionEnum) throws InvalidDirectionException, InvalidPositionException{
 
-        if(direction == null){
+        if(directionEnum == null){
             throw new InvalidDirectionException("Direction must be specified.");
         }
 
@@ -83,7 +83,7 @@ public class ToyRobotImpl implements ToyRobot{
 
         this.posX = posX;
         this.posY = posY;
-        this.direction = direction;
+        this.directionEnum = directionEnum;
     }
 
 
@@ -95,7 +95,7 @@ public class ToyRobotImpl implements ToyRobot{
         int xMoveIndex = 0;
         int yMoveIndex = 0;
 
-        switch (this.direction.getValue()){
+        switch (this.directionEnum.getValue()){
             case 0: //NORTH
                 yMoveIndex = 1;
                 break;
@@ -124,7 +124,7 @@ public class ToyRobotImpl implements ToyRobot{
         if(isNotPlaced()){
             throw new InvalidPositionException("LEFT ignored. ToyRobot must be 'PLACE'd on the table first.");
         }
-        setDirection(-1);
+        setDirectionEnum(-1);
 
     }
 
@@ -134,7 +134,7 @@ public class ToyRobotImpl implements ToyRobot{
             throw new InvalidPositionException("RIGHT ignored. ToyRobot must be 'PLACE'd on the table first.");
         }
 
-        setDirection(1);
+        setDirectionEnum(1);
 
     }
 
@@ -143,23 +143,23 @@ public class ToyRobotImpl implements ToyRobot{
             throw new InvalidPositionException("REPORT ignored. ToyRobot must be 'PLACE'd on the table first.");
 
         }
-        System.out.println(String.format("%1$s,%2$s,%3$s", this.posX, this.posY, this.direction));
+        System.out.println(String.format("%1$s,%2$s,%3$s", this.posX, this.posY, this.directionEnum));
     }
 
     private boolean isNotPlaced(){
-        return this.direction == null;
+        return this.directionEnum == null;
     }
 
-    private void setDirection(int dirIndex){
+    private void setDirectionEnum(int dirIndex){
 
-        int newDirection = this.direction.getValue() + dirIndex;
+        int newDirection = this.directionEnum.getValue() + dirIndex;
         if(newDirection < 0){
-            newDirection = 3; //Set to WEST when rotated left from NORTH
+            newDirection = 3;
         }else if(newDirection > 3){
-            newDirection = 0; //Set to NORTH when rotated right from WEST
+            newDirection = 0;
         }
 
-        this.direction = Direction.fromValue(newDirection);
+        this.directionEnum = DirectionEnum.fromValue(newDirection);
     }
 
     int getPosX() {
@@ -170,7 +170,7 @@ public class ToyRobotImpl implements ToyRobot{
         return posY;
     }
 
-    Direction getDirection() {
-        return direction;
+    DirectionEnum getDirectionEnum() {
+        return directionEnum;
     }
 }

@@ -1,6 +1,6 @@
 package com.app.toy.robot.common;
 
-public enum  Command {
+public enum CommandEnum {
 
     PLACE("PLACE"),
     MOVE("MOVE"),
@@ -10,7 +10,7 @@ public enum  Command {
 
     String value;
 
-    Command(String value) {
+    CommandEnum(String value) {
         this.value = value;
     }
 

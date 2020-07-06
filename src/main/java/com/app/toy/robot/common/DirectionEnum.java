@@ -1,6 +1,6 @@
 package com.app.toy.robot.common;
 
-public enum  Direction {
+public enum DirectionEnum {
 
     NORTH(0),
     EAST(1),
@@ -9,7 +9,7 @@ public enum  Direction {
 
     int value;
 
-    Direction(int value) {
+    DirectionEnum(int value) {
         this.value = value;
     }
 
@@ -17,7 +17,7 @@ public enum  Direction {
         return value;
     }
 
-    public static Direction fromValue(int value) {
+    public static DirectionEnum fromValue(int value) {
         switch(value) {
             case 0:
                 return NORTH;
